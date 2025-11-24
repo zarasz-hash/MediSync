@@ -122,7 +122,7 @@ void displayMenu() {
     } while (choice != 9);
 }
 
-// Color Function (same as CAMPiX)
+
 void changeColors(int color) {
     static const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(handle, color);
@@ -130,5 +130,6 @@ void changeColors(int color) {
 
 
 //ROOOMS TO ADD SIMILAR TO HOW WE HAD HALLS AND LABS IN CAMPIX: Emergency Room (ER) Operating Room Patient Room ICU Room Imaging Room (covers X-ray/CT/MRI in general) Laboratory Room Recovery Room
+
 
 
