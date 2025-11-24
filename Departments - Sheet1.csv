@@ -1,0 +1,9 @@
+Department Num,Department Number,Abbreviation,Floor,AvailBeds
+1,Pysch,PSY,1,10
+2,Maternity,MAT,2,10
+3,Pediatrics,PED,3,10
+4,ICU,ICU,4,10
+5,Emergency Room,ER,5,10
+6,Radiology,RAD,6,10
+7,Oncology,ONC,7,10
+8,Hospice,HOS,8,10
