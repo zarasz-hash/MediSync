@@ -7,6 +7,49 @@
 
 #include <iostream>
 
+// MedicalStaff
+
+class Staff {
+private:
+    int staffID;
+    string fname;
+    string lname;
+    int deptNum;
+    string phonePwd;
+    string email;
+public:
+    Staff(int id = 0, const string &f = "", const string &l = "", int dept = 0,
+          const string &phone = "", string &mail = "")
+        : staffID(id), fname(f), lname(l), deptNum(dept), phonePwd(phone), email(mail) {}
+
+    // Getters
+    int getStaffID() const { return staffID; }
+    string getFname() const { return fname; }
+    string getLname() const { return lname; }
+    int getDeptNum() const { return deptNum; }
+    string getPhonePwd() const { return phonePwd; }
+    string getEmail() const { return email; }
+
+    // For quick display
+    void print() const {
+        cout << "StaffID: " << staffID << "\n"
+                  << "Name: " << fname << " " << lname << "\n"
+                  << "DeptNum: " << deptNum << "\n"
+                  << "Phone/Password: " << phonePwd << "\n"
+                  << "Email: " << email << "\n";
+    }
+};
+
+// Demo function to create and show a sample staff member
+void demoStaff() {
+    Staff s(1001, "Alice", "Smith", 12, "555-1234/pwd", "alice.smith@hospital.org");
+    cout << "\n--- Sample Staff Record ---\n";
+    s.print();
+    cout << "---------------------------\n\n";
+}
+
+
+
 
 bool login() {
     const std::string USERNAME = "admin";
@@ -130,6 +173,7 @@ void changeColors(int color) {
 
 
 //ROOOMS TO ADD SIMILAR TO HOW WE HAD HALLS AND LABS IN CAMPIX: Emergency Room (ER) Operating Room Patient Room ICU Room Imaging Room (covers X-ray/CT/MRI in general) Laboratory Room Recovery Room
+
 
 
 
