@@ -1,4 +1,6 @@
 // MediSync.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// Purpose: This program reserves rooms for the staff so they can aid patients.
+
 
 //ROOOMS TO ADD SIMILAR TO HOW WE HAD HALLS AND LABS IN CAMPIX: Emergency Room (ER) Operating Room Patient Room ICU Room Imaging Room (covers X-ray/CT/MRI in general) Laboratory Room Recovery Room
 
@@ -172,8 +174,52 @@ void changeColors(int color) {
     SetConsoleTextAttribute(handle, color);
 }
 
+void ecrypt(string entPwd) {
+    //*Encrypt / Decrypt variables
+    //* sepwd (string encrypted pwd) 
+    //* sdpwd (string decrypted pwd) 
+    //* vepwd (vector encrypted pwd)
+    char temp;
+    string sepwd = "";
+    vector <char> vepwd;
+
+
+    for (int i = 0; i < entPwd.length(); i++) {
+        temp = entPwd.at(i);
+        temp += 1;
+        vepwd.push_back(temp);
+        sepwd = sepwd + temp;
+
+    }
+    //store encrypted password in stage file
+    //cout << sepwd;
+}
+
+
+//Encryt/Decrypt
+
+string decrypt(string entPwd){
+    //Decrypt
+    char temp;
+    string sdpwd = "";
+    vector <char> vdpwd;
+
+    for (int i = 0; i < entPwd.length(); i++) {
+        temp = entPwd.at(i);
+        temp -= 1;
+        vdpwd.push_back(temp);
+        sdpwd = sdpwd + temp;
+    }
+    return sdpwd;
+    //use sdpwd compare to entPwd for authentication
+}
+
+
+
+
 
 //ROOOMS TO ADD SIMILAR TO HOW WE HAD HALLS AND LABS IN CAMPIX: Emergency Room (ER) Operating Room Patient Room ICU Room Imaging Room (covers X-ray/CT/MRI in general) Laboratory Room Recovery Room
+
 
 
 
