@@ -9,6 +9,9 @@
 
 // MediSync_colored.cpp : Hospital Staff & Room Management System (colored UI)
 
+// MediSync_colored_full.cpp
+// Original MediSync code with Theme A (Hospital Modern Blue) colors applied
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -18,6 +21,17 @@
 #include <Windows.h>
 #endif
 using namespace std;
+
+// Color constants (Theme A) - no white/gray
+const int COLOR_HEADER = 11;    // Bright Cyan
+const int COLOR_TITLE  = 3;     // Teal
+const int COLOR_MENU   = 9;     // Light Blue
+const int COLOR_SUCCESS= 10;    // Green
+const int COLOR_ERROR  = 12;    // Red
+const int COLOR_RESET  = 1;     // Blue (used as non-white reset)
+
+// Forward declaration for color function
+void changeColors(int color);
 
 // Department class
 class Department {
@@ -39,8 +53,12 @@ public:
     int getAvailBeds() const { return availBeds; }
 
     void print() const {
+        changeColors(COLOR_MENU);
         cout << "Dept #" << deptNum << " | " << deptName << " (" << abbreviation 
-             << ") | Floor: " << floor << " | Available Beds: " << availBeds << "\n";
+             << ") | Floor: " << floor << " | Available Beds: ";
+        changeColors(availBeds > 0 ? COLOR_SUCCESS : COLOR_ERROR);
+        cout << availBeds << "\n";
+        changeColors(COLOR_RESET);
     }
 };
 
@@ -72,34 +90,25 @@ public:
 
     // For quick display
     void print() const {
+        changeColors(COLOR_MENU);
         cout << "StaffID: R" << staffID << " | Name: " << fname << " " << lname 
              << " | Dept: " << deptNum << " | Email: " << email << " | Phone: " << phonePwd << "\n";
+        changeColors(COLOR_RESET);
     }
 };
 
 // Demo function to create and show a sample staff member
 void demoStaff() {
-    // Header style
-    // 11 = Light Cyan (medical header)
-    #ifdef _WIN32
-    static const HANDLE handle_demo = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(handle_demo, 11);
-    #endif
+    changeColors(COLOR_HEADER);
     cout << "\n--- Sample Staff Record ---\n";
-    #ifdef _WIN32
-    SetConsoleTextAttribute(handle_demo, 15);
-    #endif
+    changeColors(COLOR_RESET);
 
     Staff s(1001, "Alice", "Smith", 12, "555-1234/pwd", "alice.smith@hospital.org");
     s.print();
 
-    #ifdef _WIN32
-    SetConsoleTextAttribute(handle_demo, 11);
-    #endif
+    changeColors(COLOR_HEADER);
     cout << "---------------------------\n\n";
-    #ifdef _WIN32
-    SetConsoleTextAttribute(handle_demo, 15);
-    #endif
+    changeColors(COLOR_RESET);
 }
 
 bool login() {
@@ -108,30 +117,28 @@ bool login() {
     std::string inputUser, inputPass;
 
     // header
-    changeColors(11);
+    changeColors(COLOR_HEADER);
     std::cout << "\n--- Admin Login ---\n";
-    changeColors(15);
+    changeColors(COLOR_RESET);
 
     std::cout << "Username: ";
     std::getline(std::cin, inputUser);
     std::cout << "Password: ";
     std::getline(std::cin, inputPass);
     if (inputUser == USERNAME && inputPass == PASSWORD) {
-        changeColors(10);
+        changeColors(COLOR_SUCCESS);
         std::cout << "Login successful!\n";
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return true;
     } else {
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         std::cout << "Invalid credentials.\n";
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return false;
     }
 }
 
 // Function Prototypes
-void changeColors(int color);
-void displayMenu();
 vector<Staff> loadStaffFromCSV(const string& filename);
 vector<Department> loadDepartmentsFromCSV(const string& filename);
 void displayStaff(const vector<Staff>& staffList);
@@ -139,6 +146,7 @@ void displayDepartments(const vector<Department>& depts);
 void saveDepartmentsToCSV(const vector<Department>& depts, const string& filename);
 void manageDepartments(vector<Department>& depts, const string& filename);
 int authenticate(const vector<Staff>& staffList, const vector<Department>& depts);
+void displayMenu();
 
 // Load staff from CSV file
 vector<Staff> loadStaffFromCSV(const string& filename) {
@@ -146,9 +154,9 @@ vector<Staff> loadStaffFromCSV(const string& filename) {
     ifstream file(filename);
     
     if (!file.is_open()) {
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         cerr << "Error: Could not open file " << filename << endl;
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return staffList;
     }
 
@@ -199,9 +207,9 @@ vector<Department> loadDepartmentsFromCSV(const string& filename) {
     ifstream file(filename);
     
     if (!file.is_open()) {
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         cerr << "Error: Could not open file " << filename << endl;
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return depts;
     }
 
@@ -238,24 +246,26 @@ vector<Department> loadDepartmentsFromCSV(const string& filename) {
 
 // Display staff
 void displayStaff(const vector<Staff>& staffList) {
-    changeColors(11);
+    changeColors(COLOR_HEADER);
     cout << "\n========== STAFF MEMBERS ==========\n";
-    changeColors(15);
+    changeColors(COLOR_RESET);
 
     if (staffList.empty()) {
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         cout << "No staff found.\n";
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return;
     }
     
     for (const auto& staff : staffList) {
-        changeColors(14);
+        changeColors(COLOR_MENU);
         staff.print();
-        changeColors(15);
     }
+    changeColors(COLOR_RESET);
     cout << "==================================\n";
+    changeColors(COLOR_MENU);
     cout << "Press Enter to continue...";
+    changeColors(COLOR_RESET);
     cin.ignore();
     string dummy;
     getline(cin, dummy);
@@ -263,27 +273,21 @@ void displayStaff(const vector<Staff>& staffList) {
 
 // Display departments (read-only)
 void displayDepartments(const vector<Department>& depts) {
-    changeColors(11);
+    changeColors(COLOR_HEADER);
     cout << "\n========== DEPARTMENTS ==========\n";
-    changeColors(15);
+    changeColors(COLOR_RESET);
 
     if (depts.empty()) {
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         cout << "No departments found.\n";
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return;
     }
     
     for (const auto& dept : depts) {
-        // dept header/info in yellow
-        changeColors(14);
-        cout << "Dept #" << dept.getDeptNum() << " | " << dept.getDeptName() << " (" << dept.getAbbreviation() 
-             << ") | Floor: " << dept.getFloor() << " | Available Beds: ";
-        // beds status color: green if >0 else red
-        changeColors(dept.getAvailBeds() > 0 ? 10 : 12);
-        cout << dept.getAvailBeds() << "\n";
-        changeColors(15);
+        dept.print();
     }
+    changeColors(COLOR_RESET);
     cout << "=================================\n";
 }
 
@@ -291,9 +295,9 @@ void displayDepartments(const vector<Department>& depts) {
 void saveDepartmentsToCSV(const vector<Department>& depts, const string& filename) {
     ofstream out(filename);
     if (!out.is_open()) {
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         cerr << "Error: could not open " << filename << " for writing." << endl;
-        changeColors(15);
+        changeColors(COLOR_RESET);
         return;
     }
     // write header matching original file
@@ -309,38 +313,41 @@ void manageDepartments(vector<Department>& depts, const string& filename) {
     while (true) {
         displayDepartments(depts);
 
-        changeColors(11);
+        changeColors(COLOR_TITLE);
         cout << "\nDo you want to update department beds? (y/n): ";
-        changeColors(15);
+        changeColors(COLOR_RESET);
 
         char c;
         cin >> c;
         if (c == 'n' || c == 'N') {
             // consume rest of line
             string rest; getline(cin, rest);
-            changeColors(14);
+            changeColors(COLOR_MENU);
             cout << "Returning to main menu...\n";
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
         }
         if (c != 'y' && c != 'Y') {
             string rest; getline(cin, rest);
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "Invalid choice. Returning to departments menu." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
         }
         // consume newline
         string rest; getline(cin, rest);
 
+        changeColors(COLOR_TITLE);
         cout << "Enter Department Number (numeric ID) to update: ";
+        changeColors(COLOR_RESET);
+
         int dnum;
         if (!(cin >> dnum)) {
             cin.clear();
             getline(cin, rest);
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "Invalid number. Aborting update." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
         }
         getline(cin, rest); // consume end of line
@@ -350,37 +357,41 @@ void manageDepartments(vector<Department>& depts, const string& filename) {
             if (depts[i].getDeptNum() == dnum) { idx = (int)i; break; }
         }
         if (idx < 0) {
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "Department " << dnum << " not found." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             continue;
         }
 
-        changeColors(14);
-        cout << "Selected: "; 
-        changeColors(depts[idx].getAvailBeds() > 0 ? 10 : 12);
+        changeColors(COLOR_MENU);
+        cout << "Selected: ";
+        changeColors(depts[idx].getAvailBeds() > 0 ? COLOR_SUCCESS : COLOR_ERROR);
         depts[idx].print();
-        changeColors(15);
+        changeColors(COLOR_RESET);
 
-        changeColors(11);
+        changeColors(COLOR_TITLE);
         cout << "Choose action: 1) Mark beds free (increase)  2) Reserve bed(s) (decrease)\nEnter 1 or 2: ";
-        changeColors(15);
+        changeColors(COLOR_RESET);
+
         int action;
         if (!(cin >> action)) {
             cin.clear(); getline(cin, rest);
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "Invalid action. Aborting update." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
         }
         getline(cin, rest);
+        changeColors(COLOR_TITLE);
         cout << "How many beds to change?: ";
+        changeColors(COLOR_RESET);
+
         int delta;
         if (!(cin >> delta)) {
             cin.clear(); getline(cin, rest);
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "Invalid number. Aborting update." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
         }
         getline(cin, rest);
@@ -388,33 +399,33 @@ void manageDepartments(vector<Department>& depts, const string& filename) {
         if (action == 1) {
             int newVal = depts[idx].getAvailBeds() + delta;
             depts[idx] = Department(depts[idx].getDeptNum(), depts[idx].getDeptName(), depts[idx].getAbbreviation(), depts[idx].getFloor(), newVal);
-            changeColors(10);
+            changeColors(COLOR_SUCCESS);
             cout << "Updated. Available beds for dept " << depts[idx].getDeptNum() << " is now " << depts[idx].getAvailBeds() << ".\n";
-            changeColors(15);
+            changeColors(COLOR_RESET);
         } else if (action == 2) {
             int newVal = depts[idx].getAvailBeds() - delta;
             if (newVal < 0) {
-                changeColors(12);
+                changeColors(COLOR_ERROR);
                 cout << "Cannot reserve that many beds; not enough available. Current: " << depts[idx].getAvailBeds() << "\n";
-                changeColors(15);
+                changeColors(COLOR_RESET);
                 continue;
             }
             depts[idx] = Department(depts[idx].getDeptNum(), depts[idx].getDeptName(), depts[idx].getAbbreviation(), depts[idx].getFloor(), newVal);
-            changeColors(10);
+            changeColors(COLOR_SUCCESS);
             cout << "Updated. Available beds for dept " << depts[idx].getDeptNum() << " is now " << depts[idx].getAvailBeds() << ".\n";
-            changeColors(15);
+            changeColors(COLOR_RESET);
         } else {
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "Unknown action." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             continue;
         }
 
         // save changes
         saveDepartmentsToCSV(depts, filename);
-        changeColors(14);
+        changeColors(COLOR_MENU);
         cout << "Changes saved to " << filename << ".\n";
-        changeColors(15);
+        changeColors(COLOR_RESET);
     }
 }
 
@@ -423,24 +434,28 @@ void manageDepartments(vector<Department>& depts, const string& filename) {
 int authenticate(const vector<Staff>& staffList, const vector<Department>& depts) {
     const int maxAttempts = 3;
     for (int attempt = 1; attempt <= maxAttempts; ++attempt) {
-        changeColors(11);
+        changeColors(COLOR_HEADER);
         cout << "\nAttempt " << attempt << " of " << maxAttempts << "\n";
-        changeColors(15);
+        changeColors(COLOR_RESET);
 
+        changeColors(COLOR_TITLE);
         cout << "Enter Staff ID (e.g. R1001) or Email: ";
+        changeColors(COLOR_RESET);
         string identifier;
         // consume any leftover newline
         if (cin.peek() == '\n') cin.get();
         getline(cin, identifier);
 
         if (identifier.empty()) {
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "No identifier entered.\n";
-            changeColors(15);
+            changeColors(COLOR_RESET);
             continue;
         }
 
+        changeColors(COLOR_TITLE);
         cout << "Enter password: ";
+        changeColors(COLOR_RESET);
         string pwd;
         getline(cin, pwd);
 
@@ -457,24 +472,24 @@ int authenticate(const vector<Staff>& staffList, const vector<Department>& depts
                 if (expectedID == identifier) {
                     found = true;
                     if (pwd == staffList[i].getPassword()) {
-                        changeColors(10);
+                        changeColors(COLOR_SUCCESS);
                         cout << "Login successful. Welcome, " << staffList[i].getFname() << " " << staffList[i].getLname() << "!\n";
-                        changeColors(15);
+                        changeColors(COLOR_RESET);
                         // Print department info from departments list if available
                         int staffDept = staffList[i].getDeptNum();
                         for (const auto &d : depts) {
                             if (d.getDeptNum() == staffDept) {
-                                changeColors(11);
+                                changeColors(COLOR_HEADER);
                                 cout << "Your department: (" << staffDept << ") " << d.getDeptName() << " [" << d.getAbbreviation() << "]\n";
-                                changeColors(15);
+                                changeColors(COLOR_RESET);
                                 break;
                             }
                         }
                         return (int)i;
                     } else {
-                        changeColors(12);
+                        changeColors(COLOR_ERROR);
                         cout << "Incorrect password for ID " << identifier << ".\n";
-                        changeColors(15);
+                        changeColors(COLOR_RESET);
                         break;
                     }
                 }
@@ -483,23 +498,23 @@ int authenticate(const vector<Staff>& staffList, const vector<Department>& depts
                 if (!staffList[i].getEmail().empty() && staffList[i].getEmail() == identifier) {
                     found = true;
                     if (pwd == staffList[i].getPassword()) {
-                        changeColors(10);
+                        changeColors(COLOR_SUCCESS);
                         cout << "Login successful. Welcome, " << staffList[i].getFname() << " " << staffList[i].getLname() << "!\n";
-                        changeColors(15);
+                        changeColors(COLOR_RESET);
                         int staffDept2 = staffList[i].getDeptNum();
                         for (const auto &d : depts) {
                             if (d.getDeptNum() == staffDept2) {
-                                changeColors(11);
+                                changeColors(COLOR_HEADER);
                                 cout << "Your department: (" << staffDept2 << ") " << d.getDeptName() << " [" << d.getAbbreviation() << "]\n";
-                                changeColors(15);
+                                changeColors(COLOR_RESET);
                                 break;
                             }
                         }
                         return (int)i;
                     } else {
-                        changeColors(12);
+                        changeColors(COLOR_ERROR);
                         cout << "Incorrect password for email " << identifier << ".\n";
-                        changeColors(15);
+                        changeColors(COLOR_RESET);
                         break;
                     }
                 }
@@ -507,19 +522,19 @@ int authenticate(const vector<Staff>& staffList, const vector<Department>& depts
         }
 
         if (!found) {
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "No account found for '" << identifier << "'.\n";
-            changeColors(15);
+            changeColors(COLOR_RESET);
         }
 
-        changeColors(12);
+        changeColors(COLOR_ERROR);
         cout << "Authentication failed for this attempt." << endl;
-        changeColors(15);
+        changeColors(COLOR_RESET);
     }
 
-    changeColors(12);
+    changeColors(COLOR_ERROR);
     cout << "Maximum attempts reached. Exiting...\n";
-    changeColors(15);
+    changeColors(COLOR_RESET);
     return -1;
 }
 
@@ -534,12 +549,12 @@ void displayMenu() {
     vector<Department> departments = loadDepartmentsFromCSV("Departments - Sheet1.csv");
 
     // Initial welcome banner shown before login
-    changeColors(11);
+    changeColors(COLOR_HEADER);
     cout << "\n**********************************************************" << endl;
     cout << "***            Welcome to MediSync v1.0              ***" << endl;
     cout << "***  Hospital room & staff reservation management    ***" << endl;
     cout << "**********************************************************\n" << endl;
-    changeColors(15);
+    changeColors(COLOR_RESET);
 
     int userIndex = authenticate(staffList, departments);
     if (userIndex < 0) {
@@ -547,64 +562,68 @@ void displayMenu() {
     }
 
     cout << endl << endl;
-    changeColors(11);
+    changeColors(COLOR_HEADER);
     cout << "********************************************************************" << endl;
     cout << "***********************  WELCOME TO MEDISYNC  **********************" << endl;
     cout << "********************************************************************" << endl;
-    changeColors(15);
+    changeColors(COLOR_RESET);
 
     do {
         cout << endl;
-        changeColors(11);
+        changeColors(COLOR_TITLE);
         cout << "----------------------- MAIN MENU -----------------------" << endl;
-        changeColors(15);
+        changeColors(COLOR_MENU);
         cout << "1. View Staff Members" << endl;
         cout << "2. View Departments" << endl;
         cout << "3. Exit Program" << endl;
+        changeColors(COLOR_RESET);
         cout << "---------------------------------------------------------" << endl;
+        changeColors(COLOR_TITLE);
         cout << "Enter Choice: ";
+        changeColors(COLOR_RESET);
 
         cin >> choice;
 
         switch (choice) {
         case 1:
-            changeColors(14);
+            changeColors(COLOR_MENU);
             displayStaff(staffList);
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
 
         case 2:
-            changeColors(14);
+            changeColors(COLOR_MENU);
             manageDepartments(departments, "Departments - Sheet1.csv");
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
 
         case 3:
-            changeColors(10);
+            changeColors(COLOR_SUCCESS);
             cout << "Thank you for using MediSync. Program Terminated." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
             break;
 
         default:
-            changeColors(12);
+            changeColors(COLOR_ERROR);
             cout << "ERROR: Invalid Choice! Please select an option 1–3." << endl;
-            changeColors(15);
+            changeColors(COLOR_RESET);
         }
 
     } while (choice != 3);
 }
 
 
+// changeColors implementation
 void changeColors(int color) {
     // Note: Color changing is Windows-specific (GetStdHandle/SetConsoleTextAttribute)
-    // On Linux, you can use ANSI escape codes if needed
-    // For now, this function does nothing on non-Windows systems
+    // On Linux, this function will be a no-op (no color change)
     #ifdef _WIN32
     static const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(handle, color);
     #endif
 }
 
+// Encryption helper (kept from original)
 void ecrypt(string entPwd) {
     //*Encrypt / Decrypt variables
     //* sepwd (string encrypted pwd) 
@@ -646,16 +665,5 @@ string decrypt(string entPwd){
     //use sdpwd compare to entPwd for authentication
 }
 
-
-
-
-
 //ROOOMS TO ADD SIMILAR TO HOW WE HAD HALLS AND LABS IN CAMPIX: Emergency Room (ER) Operating Room Patient Room ICU Room Imaging Room (covers X-ray/CT/MRI in general) Laboratory Room Recovery Room
-
-
-
-
-
-
-
 
