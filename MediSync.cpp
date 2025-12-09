@@ -615,13 +615,23 @@ void displayMenu() {
 
 // changeColors implementation
 void changeColors(int color) {
-    // Note: Color changing is Windows-specific (GetStdHandle/SetConsoleTextAttribute)
-    // On Linux, this function will be a no-op (no color change)
     #ifdef _WIN32
     static const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(handle, color);
+    #else
+    // Map the project's color constants to ANSI escape sequences for POSIX terminals
+    switch (color) {
+        case COLOR_HEADER:  std::cout << "\033[96m"; break; // bright cyan
+        case COLOR_TITLE:   std::cout << "\033[36m"; break; // cyan/teal
+        case COLOR_MENU:    std::cout << "\033[94m"; break; // light blue
+        case COLOR_SUCCESS: std::cout << "\033[92m"; break; // green
+        case COLOR_ERROR:   std::cout << "\033[91m"; break; // red
+        case COLOR_RESET:   std::cout << "\033[0m";  break; // reset
+        default:            std::cout << "\033[0m";  break;
+    }
     #endif
 }
+
 
 // Encryption helper (kept from original)
 void ecrypt(string entPwd) {
@@ -666,4 +676,3 @@ string decrypt(string entPwd){
 }
 
 //ROOOMS TO ADD SIMILAR TO HOW WE HAD HALLS AND LABS IN CAMPIX: Emergency Room (ER) Operating Room Patient Room ICU Room Imaging Room (covers X-ray/CT/MRI in general) Laboratory Room Recovery Room
-
